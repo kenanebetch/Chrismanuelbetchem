@@ -1,37 +1,44 @@
-// Import Express.js
 const express = require('express');
-
-// Create an Express app
 const app = express();
 
-// Middleware to parse JSON bodies
+// Important : ceci permet à ton code de lire les données envoyées par Meta
 app.use(express.json());
 
-// Set port and verify_token
-const port = process.env.PORT || 3000;
-const verifyToken = process.env.VERIFY_TOKEN;
+// --- LE CODE POUR META COMMENCE ICI ---
 
-// Route for GET requests
-app.get('/', (req, res) => {
-  const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
+// Cette partie sert à la VÉRIFICATION (le bouton "Vérifier" sur Meta)
+app.get('/webhook', (req, res) => {
+  // Tu pourras changer "mon_code_secret" par ce que tu veux plus tard
+  const VERIFY_TOKEN = "mon_code_secret"; 
 
-  if (mode === 'subscribe' && token === verifyToken) {
-    console.log('WEBHOOK VERIFIED');
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    console.log('Lien validé par Meta !');
     res.status(200).send(challenge);
   } else {
-    res.status(403).end();
+    res.sendStatus(403);
   }
 });
 
-// Route for POST requests
-app.post('/', (req, res) => {
-  const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19);
-  console.log(`\n\nWebhook received ${timestamp}\n`);
-  console.log(JSON.stringify(req.body, null, 2));
-  res.status(200).end();
+// Cette partie servira à RECEVOIR les messages plus tard
+app.post('/webhook', (req, res) => {
+  console.log('Données reçues :', req.body);
+  res.sendStatus(200);
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`\nListening on port ${port}\n`);
+// --- LE CODE POUR META TERMINE ICI ---
+
+// Ton message d'accueil pour vérifier que le site marche
+app.get('/', (req, res) => {
+  res.send('Le serveur de mon projet est en ligne !');
 });
+
+// Le port pour Render (ne change pas cette partie)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Serveur prêt sur le port ${PORT}`);
+});
+
