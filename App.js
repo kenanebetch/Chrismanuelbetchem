@@ -9,7 +9,7 @@ app.use(express.json());
 // Cette partie sert à la VÉRIFICATION (le bouton "Vérifier" sur Meta)
 app.get('/webhook', (req, res) => {
   // Tu pourras changer "mon_code_secret" par ce que tu veux plus tard
-  const VERIFY_TOKEN = "mon_code_secret"; 
+  const VERIFY_TOKEN = EAAVz6gFF9GEBQeK4dFF8ElLus7Vb5AYPyb8bj1B3yIbr1daC3ZCQnVjZCyF4Y8opZBqaHFpIxW64ZCM7JiDLNGuHU2jxlbQiZCn4ci1KcjQwrXZAAKk2QltMXECRpEql1uwvsPWWLKZCDZCltRc6JWbzXddMVyrjxbQXvXRrZAgoZAPRPa8a6QkJD84uPLt8LfVyPO4NYflwvzP9TMhqvwLa8wATFTXipSTvxhM4YN; 
 
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
